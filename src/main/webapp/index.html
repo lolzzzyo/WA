@@ -1,0 +1,24 @@
+<!DOCTYPE html> 
+<html>   
+	<title>Dynamic Example</title>   
+	<body>     
+		<form action="DynamicServlet.do" method="get">       
+			<div>    
+				<h3>Enter your username</h3>     
+				<input type="text" name="username" />         
+				<input type="submit" value="Go!" />       
+			</div>     
+		</form>
+		<form action="CalculatorServlet.do" method="get">
+			<div>
+				<h3>Basic calculator</h3>
+				<input type="number" name="number1" />
+				<input type="number" name="number2" />
+				<input type="submit" name="action" value="+" />
+				<input type="submit" name="action" value="-" />
+				<input type="submit" name="action" value="/" />
+				<input type="submit" name="action" value="*" />
+			</div>
+		</form>   
+	</body> 
+</html>

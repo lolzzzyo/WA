@@ -1,0 +1,106 @@
+<!DOCTYPE html> 
+<html>   
+	<title>JavaScript Rekenmachine</title>   
+	<style>  
+	div#frame {   
+		background-color: gray;   
+		margin:  1em;   
+		padding:  0.5em;   
+		text-align:  center;   
+		width:   13.5em;  
+	}    
+	div#display {   
+		background-color: white;   
+		height:  1.5em;   
+		margin:  0.5em;   
+		padding-right: 0.3em;   
+		text-align:  right;  
+	}    
+	button {   
+		height:  3.5em;   
+		margin-bottom: 0.3em;   
+		width:   3.5em;  
+	}   
+	</style>   
+	<body>  
+		<div id="frame">   
+			<div id="display">0</div>     
+			<button id="btn_7">7</button>   
+			<button id="btn_8">8</button>   
+			<button id="btn_9">9</button>   
+			<button id="btn_div">/</button>      
+			<button id="btn_4">4</button>  
+			<button id="btn_5">5</button>   
+			<button id="btn_6">6</button>   
+			<button id="btn_prod">*</button>      
+			<button id="btn_1">1</button>   
+			<button id="btn_2">2</button>   
+			<button id="btn_3">3</button>   
+			<button id="btn_min">-</button>      
+			<button id="btn_clear">C</button>   
+			<button id="btn_0">0</button>   
+			<button id="btn_eq">=</button>   
+			<button id="btn_plus">+</button>  
+		</div>
+		<script>
+		var newValue = "";
+		var calculate = "";
+		var operator_text = ["plus", "min", "div", "prod"];
+		var operator_symbol = ["+", "-", "/", "*"];
+		var total = "";
+		var newOperator = "";
+		function display(event){
+			newValue = event.target.innerHTML;
+			calculate = document.querySelector("#display").innerHTML += newValue;
+		}
+		function operator(event){
+			var check = false;
+			var text = document.querySelector("#display").innerHTML;
+			for(var i = 0; i < operator_symbol.length; i++){
+				if(text.slice(-1) == operator_symbol[i]){
+					check = true;
+				}
+			}
+			newOperator += event.target.innerHTML;
+			if(!check){	
+				document.querySelector("#display").innerHTML += newOperator.slice(-1);
+			}else{
+				text = text.slice(0, -1);
+				text += newOperator.slice(-1);
+				document.querySelector("#display").innerHTML = text;
+			}
+			
+		}
+		function calculateTotal(event){
+	        var isTotal = eval(calculate);
+	        document.querySelector("#display").innerHTML = isTotal;
+	        console.log(isTotal);
+	        newOperator = "";
+		}
+
+		function clear(event){
+			document.querySelector("#display").innerHTML = "0";
+			newValue = "";
+			calculate = "";
+			total = "";
+		}
+		for(var i = 0; i < 10; i++){
+			var number = document.querySelector("#btn_" + i);
+			number.addEventListener("click", display);
+		}
+		
+		for(var i = 0; i < operator_text.length; i++){
+			var oper = document.querySelector("#btn_" + operator_text[i]);
+			oper.addEventListener("click", operator);
+		}
+		
+		
+		var eq = document.querySelector("#btn_eq");
+		eq.addEventListener("click", function() {calculateTotal()});
+		
+		var clr = document.querySelector("#btn_clear");
+		clr.addEventListener("click", function() {clear()});
+		
+		</script>
+	</body> 
+</html> 
