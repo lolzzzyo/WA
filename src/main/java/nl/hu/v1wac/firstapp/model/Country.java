@@ -31,7 +31,7 @@ public class Country {
 		return code;
 	}
 	
-	public String getIso3() {
+	public String getIso3Code() {
 		return iso3;
 	}
 	

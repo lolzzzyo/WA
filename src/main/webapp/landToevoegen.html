@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+        <title>Landen informatie</title>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+        <style>
+
+        	body {
+        		background-color:#D3D3D3;
+        	}
+
+            .vakantieBestemmingen {
+                padding:10px;
+                background-color:#7f8c8d;
+                margin-bottom:10px;
+                margin-top:10px;
+            }
+
+            #frame {
+                width: 150px;
+                clear: both;
+            }
+
+            #frame input {
+                width: 100%;
+                clear: both;
+                margin:10px;
+            }
+
+
+        </style>
+    </head>
+    <body>
+        <div class="vakantieBestemmingen"><b style="color:white;">Land toevoegen</b></div>
+    	<div id="frame">   
+
+                <form id="landToevoegen">
+                    <label>Code: </label>
+                    <input type="text" name="code" id="code"><br/>
+
+                    <label>Iso3: </label>
+                    <input type="text" name="iso3code" id="iso3code"><br/>
+
+                    <label>Name: </label>
+                    <input type="text" name="name" id="name"><br/>
+
+                    <label>Continent: </label>
+                    <input type="text" name="continent" id="continent"><br/>
+
+                    <label>Capital: </label>
+                    <input type="text" name="capital" id="capital"><br/>
+
+                    <label>Region: </label>
+                    <input type="text" name="region" id="region"><br/>
+
+                    <label>Surface: </label>
+                    <input type="double" name="surface" id="surface"><br/>
+
+                    <label>Population: </label>
+                    <input type="number" name="population" id="population"><br/>
+
+                    <label>Government: </label>
+                    <input type="text" name="governmentform" id="governmentform"><br/>
+
+                    <label>Latitude: </label>
+                    <input type="number" name="latitude" id="latitude"><br/>
+
+                    <label>Longitude: </label>
+                    <input type="number" name="longitude" id="longitude"><br/>
+
+                    <a href="landen_informatie.html"><input type="button" id="post" value="Toevoegen"></a>
+
+                </form>
+
+            </div>  
+        </div>
+    </body>
+</html>
+
+<script src="//cdn.datatables.net/1.10.15/js/dataTables.jqueryui.min.js"></script>
+<script src="//cdn.datatables.net/1.10.0-beta.2/js/jquery.dataTables.js"></script>
+<link rel="stylesheet" href="//cdn.datatables.net/1.10.5/css/jquery.dataTables.css">
+<script>
+
+// $ (document).ready(function() {
+
+//     $("#post").click(function(response) {
+//         var data = $("#landToevoegen").serialize();
+//         $.post("http://localhost:8080/firstapp/restservices/countries", data, function(response) {
+            
+//         });
+//     });
+// });
+
+$("#post").click(function()
+{
+    var postData = $("#landToevoegen").serialize();
+    $.ajax(
+    {
+        url : "/restservices/countries",
+        type: "POST",
+        beforeSend: function (xhr) {
+            var token = window.sessionStorage.getItem("sessionToken");
+            xhr.setRequestHeader( 'Authorization', 'Bearer ' + token);
+            console.log(token);
+        },
+        data : postData,
+        success:function(response) 
+        {
+        
+        },
+        error: function() 
+        {
+               
+        }
+    });
+    e.preventDefault();
+    e.unbind();
+});
+
+</script>

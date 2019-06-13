@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+        <title>Login pagina</title>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+        <style>
+
+
+        </style>
+    </head>
+    <body>
+    	<div id="frame">   
+
+            <form id="loginForm">
+                <input type="text" name="username" id="username">
+                <input type="password" name="password" id="password">
+                <input type="button" id="login" value="Inloggen">
+            </form>
+
+            <div id="response"></div>
+
+        </div>  
+    </body>
+</html>
+
+<script>
+
+$ (document).ready(function() {
+    $("#login").click(function(response) {
+        var data = $("#loginForm").serialize(); 
+        $.post("/restservices/authentication", data, function(response) {
+            window.sessionStorage.setItem("sessionToken", response);
+            $("#response").text(JSON.stringify(response));
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            console.log(textStatus);
+            console.log(errorThrown);
+        });
+    });
+});
+
+</script>

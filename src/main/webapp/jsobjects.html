@@ -1,0 +1,19 @@
+<script>
+
+var person = {
+	firstName : "Andy",
+	lastName : "Jiang",
+	getFullname  : function(){
+		return firstName + " " + lastName;
+	},
+	figures : {},
+	addFigure : function(nm, rs){
+		this.figures[nm] = rs;
+	}
+};
+
+person.addFigure("WAC", 6.3);
+console.log(person.figures);
+
+
+</script>
