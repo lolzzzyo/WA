@@ -57,7 +57,7 @@
                     <input type="text" name="region" id="region"><br/>
 
                     <label>Surface: </label>
-                    <input type="double" name="surface" id="surface"><br/>
+                    <input type="number" name="surface" id="surface"><br/>
 
                     <label>Population: </label>
                     <input type="number" name="population" id="population"><br/>
@@ -71,8 +71,8 @@
                     <label>Longitude: </label>
                     <input type="number" name="longitude" id="longitude"><br/>
 
-                    <a href="landen_informatie.html"><input type="button" id="post" value="Toevoegen"></a>
-
+                    <input type="button" onclick="toevoegen()" value="Toevoegen"></a>
+					<a href="landen.html"><input type="button" value="Terug"></a>
                 </form>
 
             </div>  
@@ -80,45 +80,22 @@
     </body>
 </html>
 
-<script src="//cdn.datatables.net/1.10.15/js/dataTables.jqueryui.min.js"></script>
-<script src="//cdn.datatables.net/1.10.0-beta.2/js/jquery.dataTables.js"></script>
-<link rel="stylesheet" href="//cdn.datatables.net/1.10.5/css/jquery.dataTables.css">
+
 <script>
 
-// $ (document).ready(function() {
-
-//     $("#post").click(function(response) {
-//         var data = $("#landToevoegen").serialize();
-//         $.post("http://localhost:8080/firstapp/restservices/countries", data, function(response) {
-            
-//         });
-//     });
-// });
-
-$("#post").click(function()
-{
-    var postData = $("#landToevoegen").serialize();
-    $.ajax(
-    {
-        url : "/restservices/countries",
-        type: "POST",
-        beforeSend: function (xhr) {
-            var token = window.sessionStorage.getItem("sessionToken");
-            xhr.setRequestHeader( 'Authorization', 'Bearer ' + token);
-            console.log(token);
-        },
-        data : postData,
-        success:function(response) 
-        {
-        
-        },
-        error: function() 
-        {
-               
-        }
-    });
-    e.preventDefault();
-    e.unbind();
-});
-
+function toevoegen(event){
+		var formData = new FormData(document.querySelector("#landToevoegen"));
+		var encData = new URLSearchParams(formData.entries());
+	
+		var url = "./restservices/countries";
+		fetch(url, { method: 'POST', body: encData })
+		.then(response => response.json())
+		.then(function(myJson){
+			if(myJson.succes){
+				alert("Country added.");
+				location.href = "landen.html";
+			}
+		});
+		
+	}
 </script>

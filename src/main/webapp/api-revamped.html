@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IP-API.com Geo Location Demo</title>
+<style>
+
+       	body {
+       		background-color:#D3D3D3;
+       	}
+       	h3{
+       		color:#fff;
+       	}
+
+        .title{
+            padding:10px;
+            background-color:#7f8c8d;
+            margin-bottom:10px;
+       }
+       thead tr td{
+       		font-weight: bold;
+       }
+       tbody tr:hover{
+       		background-color:#fff;
+       		cursor:pointer;
+       }
+       @media only screen and (min-width: 750px) {
+                #frame {
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    grid-template-rows: 1fr 3fr;
+                    
+                }
+
+                .locatieGrid {
+                    grid-column:1;
+                    grid-row:1;
+                }
+
+                .weatherGrid {
+                    grid-column:2;
+                    grid-row:1;
+                }
+
+                .landenGrid {
+                    grid-column:1/3;
+                    grid-row:2;
+                }
+
+            }   
+            
+</style>
+</head>
+<body>       
+	<div id="frame">           
+		<div id="myLocation" class="locatieGrid">
+		<h3 class="title">Mijn Locatie</h3>
+			<label id="landcode"></label><br>
+			<label id="land"></label><br>
+			<label id="regio"></label><br>
+			<label id="stad"></label><br>
+			<label id="postcode"></label><br>
+			<label id="lat"></label><br>
+			<label id="long"></label><br>
+			<label id="ip"></label><br>
+		</div>           
+		<div id="weatherInfo" class="weatherGrid">
+		<h3 class="title" id="weatherTitle"></h3>
+			<label id="temp"></label><br>
+			<label id="lucht"></label><br>
+			<label id="windsnelheid"></label><br>
+			<label id="windrichting"></label><br>
+			<label id="zonop"></label><br>
+			<label id="zononder"></label><br>
+		</div>           
+		<div id="countryList" class="landenGrid">
+		<h3 class="title">Beschikbare vakantiebestemmingen</h3>
+		<table>
+		<thead>
+		<tr><td>Land</td><td>Hoofdstad</td><td>Regio</td><td>Oppervlakte</td><td>Inwoners</td></tr>
+		</thead>
+		<tbody id="countryBody">
+		</tbody>
+		</table>
+		</div>       
+	</div>      
+	<script>
+	window.onload = initPage;
+	function initPage(){
+		fetch("https://ipapi.co/json/")
+		.then(response => response.json())
+		.then(function(data){
+			var landcode = data.country;
+            var land = data.country_name;
+            var regio = data.region;
+            var stad = data.city;
+            var postcode = data.postal;
+            var lat = data.latitude;
+            var lon = data.longitude;
+            var ip = data.ip;
+            document.getElementById("landcode").innerHTML = "Landcode: " + landcode;
+            document.getElementById("land").innerHTML = "Land: " + land;
+            document.getElementById("regio").innerHTML = "Regio: " + regio;
+            document.getElementById("stad").innerHTML = "Stad: " + stad;
+            document.getElementById("postcode").innerHTML = "Postcode: " + postcode;
+            document.getElementById("lat").innerHTML = "Latitude: " + lat;
+            document.getElementById("long").innerHTML = "Longitude: " + lon;
+            document.getElementById("ip").innerHTML = "IP: " + ip;
+            showWeather(lon, lat, stad);
+            loadCountries();
+		});
+	}
+	console.log(new Date().getTime());
+	function showWeather(lon, lat, city){
+		var storage = {};
+        if(window.sessionStorage.getItem(city) === null || (storage.time + 600) < new Date().getTime()) {
+			fetch("http://api.openweathermap.org/data/2.5/weather?q="+city+"&appid=8ef6d7422c60f90abc37069119806f1a")
+			.then(response => response.json())
+			.then(function(weatherData){
+				var temp = Math.round(weatherData.main.temp - 273.15);
+	            var temperatuur = temp + " &#8451;";
+	            var humidity = weatherData.main.humidity + "%";
+	            var windDir = "";
+	
+	            if(weatherData.wind.deg >= 348 || weatherData.wind.deg < 78.75){
+	                windDir = "Noord";
+	            }
+	            else if(weatherData.wind.deg >= 78.75 && weatherData.wind.deg < 168.75){
+	                windDir = "Oost";
+	            }
+	            else if(weatherData.wind.deg >= 168.75 && weatherData.wind.deg < 191.75){
+	                windDir = "Zuid";
+	            }
+	            else if(weatherData.wind.deg >= 258.75 && weatherData.wind.deg < 281.25){
+	                windDir = "West"
+	            }
+	            else{
+	                windDir = "Geen"
+	            }
+	            var dateOp = new Date(weatherData.sys.sunrise * 1000);
+	            var hoursOp = dateOp.getHours();
+	            var minutesOp = "0" + dateOp.getMinutes();
+	            var zonsOp = hoursOp + ':' + minutesOp.substr(-2);
+	
+	            var dateOn = new Date(weatherData.sys.sunset * 1000);
+	            var hoursOn = dateOn.getHours();
+	            var minutesOn = "0" + dateOn.getMinutes();
+	            var zonsOn = hoursOn + ':' + minutesOn.substr(-2);
+	
+	            var windspeed = weatherData.wind.speed + " km/u";
+	            document.getElementById("weatherTitle").innerHTML = "Het weer in " + city;
+	            document.getElementById("temp").innerHTML = "Temperatuur: " + temperatuur;
+	            document.getElementById("lucht").innerHTML = "Luchtvochtigheid: " + humidity;
+	            document.getElementById("windsnelheid").innerHTML = "Windsnelheid: " + windspeed;
+	            document.getElementById("windrichting").innerHTML = "Windrichting: " + windDir;
+	            document.getElementById("zonop").innerHTML = "Zonsopgang: " + zonsOp;
+	            document.getElementById("zononder").innerHTML = "Zonsondergang: " + zonsOn;
+	            
+	            storage.naam = weatherData.name;
+	            storage.temperatuur = temperatuur;
+	            storage.humidity = weatherData.main.humidity;
+	            storage.windspeed = windspeed;
+	            storage.windDir = windDir;
+	            storage.zonsopgang = zonsOp;
+	            storage.zonsondergang = zonsOn;
+	            storage.time = new Date().getTime();
+	            window.sessionStorage.setItem(city, JSON.stringify(storage));
+	        
+			});
+        }else{
+			 storageInfo = JSON.parse(window.sessionStorage.getItem(city));
+			 document.getElementById("weatherTitle").innerHTML = "Het weer in " + city;
+	         document.getElementById("temp").innerHTML = "Temperatuur: " + storageInfo.temperatuur;
+	         document.getElementById("lucht").innerHTML = "Luchtvochtigheid: " + storageInfo.humidity;
+	         document.getElementById("windsnelheid").innerHTML = "Windsnelheid: " + storageInfo.windspeed;
+	         document.getElementById("windrichting").innerHTML = "Windrichting: " + storageInfo.windDir;
+	         document.getElementById("zonop").innerHTML = "Zonsopgang: " + storageInfo.zonsopgang;
+	         document.getElementById("zononder").innerHTML = "Zonsondergang: " + storageInfo.zonsondergang;
+		}
+		
+	}
+	function loadCountries(){
+		fetch("http://localhost:8080/firstapp/restservices/countries")
+		.then(response => response.json())
+		.then(function(data){
+			for(const country of data){
+				var code = country.code;
+				var name = country.name;
+				var capital = country.capital;
+				var stringCapital = '"'+ capital + '"';
+				var region = country.region;
+				var surface = country.surface;
+				var population = country.population;
+				document.getElementById("countryBody").innerHTML += "<tr id='"+code+"' onclick='showWeather("+country.lon+"," +country.lat+","+stringCapital+")'><td>"+name+"</td><td>"+capital+"</td><td>"+region+"</td><td>"+surface+"</td><td>"+population+"</td></tr>";
+			}
+			
+		});
+	}
+	
+	
+	
+	</script> 
+</body> 
+</html>

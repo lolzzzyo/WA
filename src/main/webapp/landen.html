@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IP-API.com Geo Location Demo</title>
+<style>
+
+       	body {
+       		background-color:#D3D3D3;
+       	}
+       	h3{
+       		color:#fff;
+       	}
+
+        .title{
+            padding:10px;
+            background-color:#7f8c8d;
+            margin-bottom:10px;
+       }
+       thead tr td{
+       		font-weight: bold;
+       }
+       tbody tr:hover{
+       		background-color:#fff;
+       		cursor:pointer;
+       }
+       @media only screen and (min-width: 750px) {
+                #frame {
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    grid-template-rows: 1fr 3fr;
+                    
+                }
+
+                .landenGrid {
+                    grid-column:1/3;
+                    grid-row:1;
+                }
+
+            }   
+            
+</style>
+</head>
+<body>       
+	<div id="frame">                     
+		<div id="countryList" class="landenGrid">
+		<h3 class="title">Landen</h3> 
+		<a href="landToevoegen.html"><input type="button" value="Land toevoegen"></a>
+		<table>
+		<thead>
+		<tr><td>Land</td><td>Hoofdstad</td><td>Regio</td><td>Oppervlakte</td><td>Inwoners</td><td>Keuze</td></tr>
+		</thead>
+		<tbody id="countryBody">
+		</tbody>
+		</table>
+		</div>  
+		 <form id="editForm"></form>     
+	</div>      
+	<script>
+	window.onload = loadCountries;
+
+	function loadCountries(){
+		fetch("http://localhost:8080/firstapp/restservices/countries")
+		.then(response => response.json())
+		.then(function(data){
+			for(const country of data){
+				var code = country.code;
+				var stringCode = '"'+ code + '"';
+				var name = country.name;
+				var capital = country.capital;
+				var region = country.region;
+				var surface = country.surface;
+				var population = country.population;
+				document.getElementById("countryBody").innerHTML += "<tr><td>"+name+"</td><td>"+capital+"</td><td>"
+				+region+"</td><td>"+surface+"</td><td>"+population+"</td><td><button onclick='updateWindow("+stringCode+")'>Update</button><button onclick='deleteCountry("+stringCode+")'>Delete</button></td></tr>";
+			}
+			
+		});
+	}
+	function updateWindow(code){
+		var fetchopt = {
+				method: 'GET'
+			}
+		fetch("./restservices/countries/" + code, fetchopt)
+		.then(response => response.json())
+		.then(function(data){
+		 var stringCode = '"'+ code + '"';
+		 var body = "<h2>Wijziging uitvoeren voor "+ data.name +"</h2>"
+         body += "<label>Naam: </label>";
+         body += "<input style='margin:10px;' type='text' name='name' id='name' value='" + data.name + "'><br/>";
+         body += "<label>Hoofdstad: </label>";
+         body += "<input style='margin:10px;' type='text' name='capital' id='capital' value='" + data.capital + "'><br/>";
+         body += "<label>Regio: </label>";
+         body += "<input style='margin:10px;' type='text' name='region' id='region' value='" + data.region + "'><br/>";
+         body += "<label>Oppervlakte: </label>";
+         body += "<input style='margin:10px;' type='number' name='surface' id='surface' value='" + data.surface + "'><br/>";
+         body += "<label>Inwoners: </label>";
+         body += "<input style='margin:10px;' type='number' name='population' id='population' value='" + data.population + "'><br/>";
+         body += "<input style='margin:10px;' type='button' onclick='updateCountry("+stringCode+")' value='Wijzig'></a>";
+         document.getElementById("editForm").innerHTML = body;
+		});
+	}
+	function updateCountry(code){
+		var formData = new FormData(document.querySelector("#editForm"));
+		var encData = new URLSearchParams(formData.entries());
+	
+		var url = "./restservices/countries/" + code;
+		fetch(url, { method: 'PUT', body: encData })
+		.then(response => response.json())
+		.then(function(myJson){
+			if(myJson.succes){
+				alert("Land gewijzigd");
+				location.href = "landen.html";
+			}
+		});
+	}
+	function deleteCountry(code){
+		var answer = confirm("Weet u zeker dat u dit wilt verwijderen?");
+		if(answer){
+			var fetchopt = {
+					method: 'DELETE'
+				}
+			fetch("./restservices/countries/" + code, fetchopt)
+			.then(response => response.json())
+			.then(function(myJson){
+				if(myJson.succes){
+					alert("Country deleted.");
+					location.href = "landen.html";
+				}
+			});
+	    }
+	}
+	
+	
+	
+	</script> 
+</body> 
+</html>
