@@ -1,3 +1,4 @@
+
 package nl.hu.v1wac.firstapp.webservices;
 
 import javax.annotation.security.RolesAllowed;
@@ -110,18 +111,20 @@ public class WorldResource {
 	}
 	
 	@DELETE
-	@RolesAllowed("user")
 	@Path("{code}")
+	@Produces("application/json")
 	public String deleteCountry(@PathParam("code") String code) {
 		WorldService service = ServiceProvider.getWorldService();
 		Country country = service.getCountryByCode(code);
 		dao.deleteByCode(country);
-		return "success";
+		JsonObjectBuilder job = Json.createObjectBuilder();
+		job.add("succes", true);
+		return job.build().toString();
 	}
 	
 	@PUT
-	@RolesAllowed("user")
 	@Path("{code}")
+	@Produces("application/json")
 	public String updateCountry(@PathParam("code") String code,
 								@FormParam("name") String name,
 								@FormParam("capital") String capital,
@@ -132,13 +135,14 @@ public class WorldResource {
 		Country country = service.getCountryByCode(code);
 		Country updateCountry = new Country(code,country.getIso3Code(),name,capital,country.getContinent(),region,surface,population,country.getGovernment(),country.getLatitude(),country.getLongitude());
 		dao.updateCountry(updateCountry);
-		return "success";
+		JsonObjectBuilder job = Json.createObjectBuilder();
+		job.add("succes", true);
+		return job.build().toString();
 	}
 	
 	@POST
-	@RolesAllowed("user")
 	@Produces("application/json")
-	public String createCustomer(@FormParam("code") String code,
+	public String createCountry(@FormParam("code") String code,
 								 @FormParam("iso3code") String iso3,
 								 @FormParam("name") String name,
 								 @FormParam("continent") String continent,
@@ -151,6 +155,8 @@ public class WorldResource {
 								 @FormParam("longitude") double lon) {
 		Country newCountry = new Country(code,iso3,name,continent,capital,region,surface,population,government,lat,lon);
 		dao.save(newCountry);
-		return "success";
+		JsonObjectBuilder job = Json.createObjectBuilder();
+		job.add("succes", true);
+		return job.build().toString();
 	}
 }
