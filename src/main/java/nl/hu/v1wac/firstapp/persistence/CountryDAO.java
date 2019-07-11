@@ -66,7 +66,7 @@ public class CountryDAO extends BaseDAO {
 		try (Connection con = super.getConnection()){
 			Statement stmt = con.createStatement();
 			String query = "UPDATE country SET name = '"+ country.getName() +"', region = '" + country.getRegion() + "', surfacearea = "+ country.getSurface() +", population = " + country.getPopulation() + ", capital = '" + country.getCapital() + "' WHERE code = '" + country.getCode() + "'";
-			stmt.executeQuery(query);
+			stmt.executeUpdate(query);
 			
 			System.out.println(country.getCode());
 			
@@ -78,7 +78,7 @@ public class CountryDAO extends BaseDAO {
 		try (Connection con = super.getConnection()){
 			Statement stmt = con.createStatement();
 			String query = "DELETE FROM country where code = '"+ country.getCode() +"'";
-			stmt.executeQuery(query);
+			stmt.executeUpdate(query);
 			
 			System.out.println(country.getCode());
 			
